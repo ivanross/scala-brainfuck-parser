@@ -5,12 +5,15 @@ import scala.util.parsing.combinator._
 class BrainfuckParserException(msg: String) extends Exception(msg)
 
 object BrainfuckParser extends RegexParsers {
+
+  override protected val whiteSpace = """[^\[\].,<>+-]+""".r
+
   implicit def stringToBrainfuck(input: String): List[BrainfuckToken] =
     BrainfuckParser(input)
 
   def statementList: Parser[List[BrainfuckToken]] = statement.*
 
-  def statement = loop | token | comment
+  def statement = loop | token
 
   def loop: Parser[BrainfuckToken] = "[" ~> statementList <~ "]" ^^ {
     case ls => Loop(ls)
@@ -25,10 +28,6 @@ object BrainfuckParser extends RegexParsers {
       case "." => Print
       case "," => Read
     }
-
-  def comment: Parser[BrainfuckToken] = """[^\.\*\[\]\,\<\>]""".r ^^ {
-    case x: String => Comment(x charAt 0)
-  }
 
   def apply(input: String) = parseAll(statementList, input) match {
     case Success(res, _) => res

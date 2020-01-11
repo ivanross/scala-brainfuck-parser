@@ -17,14 +17,13 @@ private class BrainfuckRunner(memorySize: Int) extends RunnerMemory {
   var output = List[Char]()
 
   def run(statements: List[BrainfuckToken]): Unit = statements foreach {
-    case IncrementCell       => incrementCell
-    case DecrementCell       => decrementCell
-    case IncrementPtr        => incrementPointer
-    case DecrementPtr        => decrementPointer
-    case Print               => printChar
-    case Read                => readByte
-    case Loop(tokens)        => loop(tokens)
-    case Comment(char: Char) => ()
+    case IncrementCell => incrementCell
+    case DecrementCell => decrementCell
+    case IncrementPtr  => incrementPointer
+    case DecrementPtr  => decrementPointer
+    case Print         => printChar
+    case Read          => readByte
+    case Loop(tokens)  => loop(tokens)
   }
 
   def printChar: Unit = output = output :+ readMemory.toChar

@@ -9,7 +9,6 @@ object BrainfuckMinifier {
       case DecrementPtr  => "<"
       case Print         => "."
       case Read          => ","
-      case Comment(_)    => ""
       case Loop(ls)      => "[" + BrainfuckMinifier(ls) + "]"
     } reduce (_ + _)
 }
