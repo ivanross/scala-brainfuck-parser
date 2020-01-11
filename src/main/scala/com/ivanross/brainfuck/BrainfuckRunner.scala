@@ -11,9 +11,9 @@ object BrainfuckRunner {
   }
 }
 
-private class BrainfuckRunner(private val memorySize: Int) {
-  var memory = new Array[Byte](memorySize)
-  var ptr = 0
+private class BrainfuckRunner(memorySize: Int) extends RunnerMemory {
+
+  var memory = new Array(memorySize)
   var output = List[Char]()
 
   def run(statements: List[BrainfuckToken]): Unit = statements foreach {
@@ -24,20 +24,12 @@ private class BrainfuckRunner(private val memorySize: Int) {
     case Print               => printChar
     case Read                => readByte
     case Loop(tokens)        => loop(tokens)
-    case Comment(char: Char) => skip
+    case Comment(char: Char) => ()
   }
 
-  def incrementPointer: Unit = ptr += 1
-  def decrementPointer: Unit = ptr -= 1
-
-  def incrementCell: Unit = memory(ptr) = (memory(ptr) + 1).toByte
-  def decrementCell: Unit = memory(ptr) = (memory(ptr) - 1).toByte
-
-  def printChar: Unit = output = output :+ memory(ptr).toChar
-  def readByte: Unit = memory(ptr) = scala.io.StdIn.readChar.toByte
-
-  def skip: Unit = return
+  def printChar: Unit = output = output :+ readMemory.toChar
+  def readByte: Unit = writeMemory(scala.io.StdIn.readChar.toByte)
 
   def loop(statements: List[BrainfuckToken]) =
-    while (memory(ptr) != 0) run(statements)
+    while (readMemory != 0) run(statements)
 }

@@ -5,6 +5,6 @@ object Main extends App {
   val script =
     scala.io.Source.fromFile("src/main/resources/test.b").mkString
 
-  println(BrainfuckRunner(script))
+  println(BrainfuckParser(script))
 
 }
