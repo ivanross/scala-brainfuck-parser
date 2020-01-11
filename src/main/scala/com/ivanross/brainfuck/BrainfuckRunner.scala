@@ -1,14 +1,20 @@
 package com.ivanross.brainfuck
 
 object BrainfuckRunner {
-  var buffer = new Array[Byte](30000)
+  def apply(
+      statements: List[BrainfuckToken],
+      memorySize: Int = 30000
+  ): String = {
+    val parser = new BrainfuckRunner(memorySize)
+    parser run statements
+    parser.output.mkString
+  }
+}
+
+private class BrainfuckRunner(private val memorySize: Int) {
+  var memory = new Array[Byte](memorySize)
   var ptr = 0
   var output = List[Char]()
-
-  def apply(statements: List[BrainfuckToken]): String = {
-    run(statements)
-    output.mkString
-  }
 
   def run(statements: List[BrainfuckToken]): Unit = statements foreach {
     case IncrementCell       => incrementCell
@@ -24,14 +30,14 @@ object BrainfuckRunner {
   def incrementPointer: Unit = ptr += 1
   def decrementPointer: Unit = ptr -= 1
 
-  def incrementCell: Unit = buffer(ptr) = (buffer(ptr) + 1).toByte
-  def decrementCell: Unit = buffer(ptr) = (buffer(ptr) - 1).toByte
+  def incrementCell: Unit = memory(ptr) = (memory(ptr) + 1).toByte
+  def decrementCell: Unit = memory(ptr) = (memory(ptr) - 1).toByte
 
-  def printChar: Unit = output = output.:+(buffer(ptr).toChar)
-  def readByte: Unit = buffer(ptr) = scala.io.StdIn.readChar.toByte
+  def printChar: Unit = output = output :+ memory(ptr).toChar
+  def readByte: Unit = memory(ptr) = scala.io.StdIn.readChar.toByte
 
   def skip: Unit = return
 
   def loop(statements: List[BrainfuckToken]) =
-    while (buffer(ptr) != 0) run(statements)
+    while (memory(ptr) != 0) run(statements)
 }
